@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "9c60ffc265596952c17499650b6cafae"
-application_url = "https://freely-tableful-vacation.ngrok-free.dev"
+application_url = "https://ethni-rewards.onrender.com"
 embedded = true
 name = "ethni-rewards"
 
@@ -25,12 +25,12 @@ api_version = "2026-10"
 scopes = "read_customers,read_orders,write_discounts"
 
 [app_proxy]
-url = "https://freely-tableful-vacation.ngrok-free.dev/proxy"
+url = "https://ethni-rewards.onrender.com/proxy"
 prefix = "apps"
 subpath = "loyalty"
 
 [auth]
-redirect_urls = [ "https://freely-tableful-vacation.ngrok-free.dev/api/auth" ]
+redirect_urls = [ "https://ethni-rewards.onrender.com/api/auth" ]
 
 [build]
 automatically_update_urls_on_dev = true
