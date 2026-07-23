@@ -1,0 +1,36 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "9c60ffc265596952c17499650b6cafae"
+application_url = "https://freely-tableful-vacation.ngrok-free.dev"
+embedded = true
+name = "ethni-rewards"
+
+[webhooks]
+api_version = "2026-10"
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/app/uninstalled"
+  topics = [ "app/uninstalled" ]
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/app/scopes_update"
+  topics = [ "app/scopes_update" ]
+
+  # orders/paid et customers/create retirés temporairement : Shopify exige une
+  # validation "Protected customer data access" avant de les activer (à faire
+  # avant la mise en prod réelle, voir dev docs).
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_customers,read_orders,write_discounts"
+
+[app_proxy]
+url = "https://freely-tableful-vacation.ngrok-free.dev/proxy"
+prefix = "apps"
+subpath = "loyalty"
+
+[auth]
+redirect_urls = [ "https://freely-tableful-vacation.ngrok-free.dev/api/auth" ]
+
+[build]
+automatically_update_urls_on_dev = true
