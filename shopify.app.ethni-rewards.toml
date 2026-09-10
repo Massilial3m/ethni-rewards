@@ -16,9 +16,34 @@ api_version = "2026-10"
   uri = "/webhooks/app/scopes_update"
   topics = [ "app/scopes_update" ]
 
-  # orders/paid et customers/create retirés temporairement : Shopify exige une
-  # validation "Protected customer data access" avant de les activer (à faire
-  # avant la mise en prod réelle, voir dev docs).
+  # Protected Customer Data access validé le 2026-07-30 (boutique de dev) :
+  # les 3 webhooks liés aux données client peuvent être réactivés.
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/customers/create"
+  topics = [ "customers/create" ]
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/orders/paid"
+  topics = [ "orders/paid" ]
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/refunds/create"
+  topics = [ "refunds/create" ]
+
+  # Webhooks obligatoires de conformité RGPD (tout app touchant des données client).
+  # Ces 3 topics utilisent `compliance_topics`, pas `topics`.
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/customers/data_request"
+  compliance_topics = [ "customers/data_request" ]
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/customers/redact"
+  compliance_topics = [ "customers/redact" ]
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/shop/redact"
+  compliance_topics = [ "shop/redact" ]
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes

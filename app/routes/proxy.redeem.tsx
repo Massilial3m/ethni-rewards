@@ -117,14 +117,34 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return Response.json({ error: "discount_creation_failed" }, { status: 502 });
   }
 
-  await db.pointsTransaction.create({
-    data: {
-      customerId: customer.id,
-      type: "REDEEM",
-      points: -pointsToRedeem,
-      discountCode: code,
-      note: `Conversion de ${pointsToRedeem} points en réduction de ${amount}€`,
-    },
+  await db.$transaction(async (tx) => {
+    await tx.pointsTransaction.create({
+      data: {
+        customerId: customer.id,
+        type: "REDEEM",
+        points: -pointsToRedeem,
+        discountCode: code,
+        note: `Conversion de ${pointsToRedeem} points en réduction de ${amount}€`,
+      },
+    });
+
+    // Consomme les lots de points les plus anciens en premier (FIFO), pour que
+    // l'expiration ne retire plus tard que ce qui n'a pas déjà été racheté.
+    let toConsume = pointsToRedeem;
+    while (toConsume > 0) {
+      const lot = await tx.pointsTransaction.findFirst({
+        where: { customerId: customer.id, remainingPoints: { gt: 0 } },
+        orderBy: { expiresAt: "asc" },
+      });
+      if (!lot || lot.remainingPoints === null) break;
+
+      const take = Math.min(lot.remainingPoints, toConsume);
+      await tx.pointsTransaction.update({
+        where: { id: lot.id },
+        data: { remainingPoints: { decrement: take } },
+      });
+      toConsume -= take;
+    }
   });
 
   return Response.json({ code, amount });

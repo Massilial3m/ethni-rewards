@@ -38,12 +38,28 @@ model LoyaltyCustomer {
   shop               String
   shopifyCustomerId  String
   pointsBalance      Int      @default(0)
+  lifetimePoints     Int      @default(0)
+  // Code de réduction personnel réutilisable, généré à l'inscription, pour
+  // parrainer des amis (ouvert à tous, un usage par nouveau client différent).
+  referralCode       String?  @unique
+  // Niveau VIP mémorisé (contrairement à lifetimePoints, il peut redescendre
+  // d'un cran si le client ne maintient pas assez de points sur 12 mois
+  // glissants — voir app/loyalty-tier.server.ts).
+  currentTier        LoyaltyTier?
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
   transactions PointsTransaction[]
+  socialActionRequests SocialActionRequest[]
 
   @@unique([shop, shopifyCustomerId])
+}
+
+enum LoyaltyTier {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
 }
 
 enum PointsTransactionType {
@@ -51,6 +67,41 @@ enum PointsTransactionType {
   EARN_ORDER
   REDEEM
   ADJUST_REFUND
+  EXPIRE
+  MILESTONE_REWARD
+  EARN_ACTION
+  FREQUENCY_REWARD
+  EARN_REFERRAL
+}
+
+enum SocialAction {
+  INSTAGRAM_FOLLOW
+  TIKTOK_FOLLOW
+  FACEBOOK_FOLLOW
+  NEWSLETTER
+}
+
+enum SocialActionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model SocialActionRequest {
+  id         String              @id @default(cuid())
+  customerId String
+  customer   LoyaltyCustomer     @relation(fields: [customerId], references: [id])
+  action     SocialAction
+  points     Int
+  // Pseudo déclaré par le client sur le réseau concerné, pour que l'équipe
+  // puisse vérifier manuellement le follow avant d'approuver.
+  handle     String?
+  status     SocialActionStatus  @default(PENDING)
+  createdAt  DateTime            @default(now())
+  reviewedAt DateTime?
+
+  @@unique([customerId, action])
+  @@index([status])
 }
 
 model PointsTransaction {
@@ -59,12 +110,26 @@ model PointsTransaction {
   customer   LoyaltyCustomer       @relation(fields: [customerId], references: [id])
   type       PointsTransactionType
   points     Int
+  // Pour les lots EARN_* : combien de ces points n'ont pas encore été rachetés ou expirés.
+  remainingPoints Int?
   shopifyOrderId String?
+  // Identifie un remboursement précis (une commande peut être remboursée plusieurs fois).
+  shopifyRefundId String?
+  // Sur une transaction MILESTONE_REWARD : quel palier de cumul (200/500/1000/2000) a été réclamé.
+  milestonePoints Int?
   discountCode   String?
   expiresAt  DateTime?
   note       String?
   createdAt  DateTime              @default(now())
 
+  // Sur une transaction EXPIRE : pointe vers le lot EARN_* qui a expiré.
+  sourceTransactionId String?
+  sourceTransaction   PointsTransaction?  @relation("TransactionExpiry", fields: [sourceTransactionId], references: [id])
+  expiryTransactions  PointsTransaction[] @relation("TransactionExpiry")
+
   @@index([customerId])
+  @@index([expiresAt])
   @@unique([shopifyOrderId, type])
+  @@unique([shopifyRefundId, type])
+  @@unique([customerId, milestonePoints, type])
 }

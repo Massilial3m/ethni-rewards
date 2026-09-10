@@ -3,35 +3,223 @@
 </div>
 
 <style>
+  #ethni-rewards-widget {
+    --er-orange: #d9822b;
+    --er-orange-dark: #b8691c;
+    --er-brown: #5c3a22;
+    --er-brown-dark: #3d2615;
+    --er-cream: #fdf8f2;
+    --er-border: #ecdfcd;
+    --er-text: #3d2615;
+    --er-muted: #8a7a68;
+    --er-success-bg: #e9f3ea;
+    --er-success-text: #2f6b3f;
+    --er-pending-bg: #fdf1de;
+    --er-pending-text: #9a5b12;
+    --er-rejected-bg: #f6e9e7;
+    --er-rejected-text: #8a3a3a;
+
+    max-width: 640px;
+    margin: 2em auto;
+    padding: 1.75em 2em 2.25em;
+    font-size: 1.15em;
+    background: var(--er-cream);
+    border: 1px solid var(--er-border);
+    border-radius: 16px;
+    color: var(--er-text);
+    box-shadow: 0 4px 16px rgba(92, 58, 34, 0.07);
+    box-sizing: border-box;
+  }
+  #ethni-rewards-widget * {
+    box-sizing: border-box;
+  }
+  .ethni-rewards-widget__loading {
+    color: var(--er-muted);
+    text-align: center;
+    padding: 1em 0;
+  }
   .ethni-rewards-widget__balance {
     display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75em 1em;
+    padding-bottom: 1.25em;
+    border-bottom: 1px solid var(--er-border);
+    margin-bottom: 1.25em;
+  }
+  .ethni-rewards-widget__balance-main {
+    display: flex;
     align-items: baseline;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+    gap: 0.5em;
   }
   .ethni-rewards-widget__balance-value {
-    font-size: 2rem;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 2.5em;
     font-weight: 700;
+    color: var(--er-brown-dark);
+    line-height: 1;
+  }
+  .ethni-rewards-widget__balance-label {
+    color: var(--er-muted);
+    font-size: 0.95em;
+  }
+  .ethni-rewards-widget__tier-badge {
+    display: inline-block;
+    padding: 0.3em 0.75em;
+    border-radius: 999px;
+    background: var(--er-orange);
+    color: #fff;
+    font-size: 0.8em;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .ethni-rewards-widget__tier-points {
+    color: var(--er-muted);
+    font-size: 0.8em;
+  }
+  .ethni-rewards-widget__section {
+    margin-top: 1.5em;
+  }
+  .ethni-rewards-widget__section-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.05em;
+    font-weight: 600;
+    color: var(--er-brown-dark);
+    margin: 0 0 0.75em;
   }
   .ethni-rewards-widget__history {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.875rem;
+    font-size: 0.875em;
   }
-  .ethni-rewards-widget__history th,
+  .ethni-rewards-widget__history th {
+    text-align: left;
+    padding: 0.5em;
+    color: var(--er-muted);
+    font-weight: 600;
+    font-size: 0.75em;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--er-border);
+  }
   .ethni-rewards-widget__history td {
     text-align: left;
-    padding: 0.4rem 0.5rem;
-    border-bottom: 1px solid #e5e5e5;
+    padding: 0.6em 0.5em;
+    border-bottom: 1px solid var(--er-border);
+  }
+  .ethni-rewards-widget__history tr:last-child td {
+    border-bottom: none;
+  }
+  #ethni-rewards-widget input[type='text'],
+  #ethni-rewards-widget input[type='number'] {
+    padding: 0.5em 0.75em;
+    border: 1px solid var(--er-border);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--er-text);
+    font-size: 0.9em;
+  }
+  #ethni-rewards-widget input[type='text']:focus,
+  #ethni-rewards-widget input[type='number']:focus {
+    outline: none;
+    border-color: var(--er-orange);
+  }
+  #ethni-rewards-widget button {
+    padding: 0.55em 1em;
+    border: none;
+    border-radius: 8px;
+    background: var(--er-orange);
+    color: #fff;
+    font-size: 0.875em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  #ethni-rewards-widget button:hover:not(:disabled) {
+    background: var(--er-orange-dark);
+  }
+  #ethni-rewards-widget button:disabled {
+    background: var(--er-border);
+    color: var(--er-muted);
+    cursor: default;
+  }
+  #ethni-rewards-widget button.ethni-rewards-btn--outline {
+    background: transparent;
+    color: var(--er-brown);
+    border: 1px solid var(--er-brown);
+  }
+  #ethni-rewards-widget button.ethni-rewards-btn--outline:hover:not(:disabled) {
+    background: var(--er-brown);
+    color: #fff;
   }
   .ethni-rewards-widget__redeem {
-    margin-top: 1rem;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.6em;
+  }
+  .ethni-rewards-widget__redeem span {
+    color: var(--er-muted);
+    font-size: 0.85em;
   }
   .ethni-rewards-widget__redeem-message {
-    margin-top: 0.5rem;
+    margin-top: 0.75em;
+    padding: 0.6em 0.85em;
+    border-radius: 8px;
+    background: var(--er-pending-bg);
+    color: var(--er-pending-text);
+    font-size: 0.875em;
+  }
+  .ethni-rewards-widget__redeem-message:empty {
+    display: none;
+  }
+  .ethni-rewards-widget__milestones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6em;
+  }
+  .ethni-rewards-widget__social-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6em;
+  }
+  .ethni-rewards-social-action-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4em 0.75em;
+    border-radius: 999px;
+    background: var(--er-success-bg);
+    color: var(--er-success-text);
+    font-size: 0.8em;
+  }
+  .ethni-rewards-social-action-status--pending {
+    background: var(--er-pending-bg);
+    color: var(--er-pending-text);
+  }
+  .ethni-rewards-social-action-status--rejected {
+    background: var(--er-rejected-bg);
+    color: var(--er-rejected-text);
+  }
+  .ethni-rewards-social-action-form {
+    display: inline-flex;
+    gap: 0.4em;
+  }
+  .ethni-rewards-social-handle-input {
+    width: 9em;
+  }
+  .ethni-rewards-widget__referral p {
+    color: var(--er-muted);
+    font-size: 0.875em;
+    margin: 0 0 0.6em;
+  }
+  .ethni-rewards-widget__referral-row {
+    display: flex;
+    gap: 0.5em;
+  }
+  .ethni-rewards-widget__referral-row input {
+    flex: 1;
+    min-width: 0;
   }
 </style>
 
@@ -51,6 +239,14 @@
           return;
         }
 
+        var tierLabels = { BRONZE: 'Bronze', SILVER: 'Argent', GOLD: 'Or', PLATINUM: 'Platine' };
+        var tierBadge = '';
+        if (data.tier) {
+          tierBadge =
+            '<span class="ethni-rewards-widget__tier-badge">Niveau ' + tierLabels[data.tier] + '</span>' +
+            '<span class="ethni-rewards-widget__tier-points">(' + data.lifetimePoints + ' pts cumulés)</span>';
+        }
+
         var historyRows = data.transactions
           .map(function (t) {
             var sign = t.points > 0 ? '+' : '';
@@ -65,28 +261,248 @@
         var redeemBlock = '';
         if (data.balance >= 200) {
           redeemBlock =
-            '<form id="ethni-rewards-redeem-form" class="ethni-rewards-widget__redeem">' +
-              '<label for="ethni-rewards-points-input">Convertir</label>' +
-              '<input type="number" id="ethni-rewards-points-input" name="points" ' +
-                'min="200" step="25" max="' + data.balance + '" value="200" />' +
-              '<span>points (25 pts = 0,50€, mini. 200 pts)</span>' +
-              '<button type="submit">Obtenir un code de réduction</button>' +
-            '</form>' +
-            '<div id="ethni-rewards-redeem-message" class="ethni-rewards-widget__redeem-message"></div>';
+            '<div class="ethni-rewards-widget__section">' +
+              '<h3 class="ethni-rewards-widget__section-title">Convertir mes points</h3>' +
+              '<form id="ethni-rewards-redeem-form" class="ethni-rewards-widget__redeem">' +
+                '<label for="ethni-rewards-points-input">Convertir</label>' +
+                '<input type="number" id="ethni-rewards-points-input" name="points" ' +
+                  'min="200" step="25" max="' + data.balance + '" value="200" />' +
+                '<span>points (25 pts = 0,50€, mini. 200 pts)</span>' +
+                '<button type="submit">Obtenir un code de réduction</button>' +
+              '</form>' +
+              '<div id="ethni-rewards-redeem-message" class="ethni-rewards-widget__redeem-message"></div>' +
+            '</div>';
+        }
+
+        var milestonesBlock = '';
+        if (data.claimableMilestones && data.claimableMilestones.length > 0) {
+          milestonesBlock =
+            '<div class="ethni-rewards-widget__section">' +
+              '<h3 class="ethni-rewards-widget__section-title">Récompenses de palier</h3>' +
+              '<div class="ethni-rewards-widget__milestones">' +
+                data.claimableMilestones
+                  .map(function (m) {
+                    return (
+                      '<button type="button" class="ethni-rewards-milestone-claim" data-milestone="' +
+                      m.points +
+                      '">Réclamer ' + Math.round(m.percent * 100) + '% (palier ' + m.points + ' pts)</button>'
+                    );
+                  })
+                  .join('') +
+              '</div>' +
+              '<div id="ethni-rewards-milestone-message" class="ethni-rewards-widget__redeem-message"></div>' +
+            '</div>';
+        }
+
+        var socialStatusLabel = {
+          PENDING: 'En attente de validation',
+          APPROVED: 'Validé ✓',
+          REJECTED: 'Non validé',
+        };
+        var socialStatusClass = {
+          PENDING: 'ethni-rewards-social-action-status--pending',
+          APPROVED: '',
+          REJECTED: 'ethni-rewards-social-action-status--rejected',
+        };
+        var socialActionsBlock = '';
+        if (data.socialActions && data.socialActions.length > 0) {
+          socialActionsBlock =
+            '<div class="ethni-rewards-widget__section">' +
+              '<h3 class="ethni-rewards-widget__section-title">Gagner plus de points</h3>' +
+              '<div class="ethni-rewards-widget__social-actions">' +
+                data.socialActions
+                  .map(function (a) {
+                    if (a.status === 'NONE' && a.requiresHandle) {
+                      return (
+                        '<form class="ethni-rewards-social-action-form" data-action="' + a.action + '">' +
+                          '<input type="text" class="ethni-rewards-social-handle-input" placeholder="Votre pseudo" required />' +
+                          '<button type="submit">' + a.label + ' (+' + a.points + ' pts)</button>' +
+                        '</form>'
+                      );
+                    }
+                    if (a.status === 'NONE') {
+                      return (
+                        '<button type="button" class="ethni-rewards-social-action" data-action="' +
+                        a.action + '">' + a.label + ' (+' + a.points + ' pts)</button>'
+                      );
+                    }
+                    return (
+                      '<span class="ethni-rewards-social-action-status ' + socialStatusClass[a.status] + '">' +
+                      a.label + ' — ' + socialStatusLabel[a.status] + '</span>'
+                    );
+                  })
+                  .join('') +
+              '</div>' +
+              '<div id="ethni-rewards-social-message" class="ethni-rewards-widget__redeem-message"></div>' +
+            '</div>';
+        }
+
+        var referralBlock = '';
+        if (data.referralCode) {
+          var referralLink = window.location.origin + '/discount/' + data.referralCode;
+          referralBlock =
+            '<div class="ethni-rewards-widget__section ethni-rewards-widget__referral">' +
+              '<h3 class="ethni-rewards-widget__section-title">Parrainez un ami</h3>' +
+              '<p>Il obtient 10% sur sa première commande, vous gagnez 100 points dès son achat.</p>' +
+              '<div class="ethni-rewards-widget__referral-row">' +
+                '<input type="text" id="ethni-rewards-referral-link" readonly value="' + referralLink + '" />' +
+                '<button type="button" id="ethni-rewards-referral-copy" class="ethni-rewards-btn--outline">Copier le lien</button>' +
+              '</div>' +
+            '</div>';
         }
 
         container.innerHTML =
           '<div class="ethni-rewards-widget__balance">' +
-            '<span class="ethni-rewards-widget__balance-value">' + data.balance + '</span>' +
-            '<span class="ethni-rewards-widget__balance-label">points Ethni Rewards</span>' +
+            '<div class="ethni-rewards-widget__balance-main">' +
+              '<span class="ethni-rewards-widget__balance-value">' + data.balance + '</span>' +
+              '<span class="ethni-rewards-widget__balance-label">points Ethni Rewards</span>' +
+            '</div>' +
+            tierBadge +
           '</div>' +
-          '<table class="ethni-rewards-widget__history">' +
-            '<thead><tr><th>Date</th><th>Détail</th><th>Points</th></tr></thead>' +
-            '<tbody>' +
-              (historyRows || '<tr><td colspan="3">Aucun mouvement pour le moment.</td></tr>') +
-            '</tbody>' +
-          '</table>' +
-          redeemBlock;
+          '<div class="ethni-rewards-widget__section">' +
+            '<h3 class="ethni-rewards-widget__section-title">Historique</h3>' +
+            '<table class="ethni-rewards-widget__history">' +
+              '<thead><tr><th>Date</th><th>Détail</th><th>Points</th></tr></thead>' +
+              '<tbody>' +
+                (historyRows || '<tr><td colspan="3">Aucun mouvement pour le moment.</td></tr>') +
+              '</tbody>' +
+            '</table>' +
+          '</div>' +
+          redeemBlock +
+          milestonesBlock +
+          socialActionsBlock +
+          referralBlock;
+
+        var referralCopyButton = document.getElementById('ethni-rewards-referral-copy');
+        if (referralCopyButton) {
+          referralCopyButton.addEventListener('click', function () {
+            var linkInput = document.getElementById('ethni-rewards-referral-link');
+            linkInput.select();
+            navigator.clipboard
+              .writeText(linkInput.value)
+              .then(function () {
+                referralCopyButton.textContent = 'Copié !';
+                setTimeout(function () {
+                  referralCopyButton.textContent = 'Copier le lien';
+                }, 2000);
+              })
+              .catch(function () {
+                referralCopyButton.textContent = 'Sélectionnez et copiez manuellement';
+              });
+          });
+        }
+
+        var socialForms = container.querySelectorAll('.ethni-rewards-social-action-form');
+        socialForms.forEach(function (form) {
+          form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            var messageEl = document.getElementById('ethni-rewards-social-message');
+            var input = form.querySelector('.ethni-rewards-social-handle-input');
+            var submitBtn = form.querySelector('button');
+            messageEl.textContent = 'Envoi de la demande…';
+            submitBtn.disabled = true;
+
+            var actionData = new FormData();
+            actionData.append('action', form.getAttribute('data-action'));
+            actionData.append('handle', input.value);
+
+            fetch('/apps/loyalty/request-social-action', {
+              method: 'POST',
+              body: actionData,
+              cache: 'no-store',
+            })
+              .then(function (res) { return res.json(); })
+              .then(function (result) {
+                if (result.error) {
+                  messageEl.textContent = "Impossible d'envoyer cette demande pour le moment.";
+                  submitBtn.disabled = false;
+                  return;
+                }
+                messageEl.textContent =
+                  'Demande envoyée, en attente de validation par notre équipe.';
+              })
+              .catch(function () {
+                messageEl.textContent = 'Une erreur est survenue, merci de réessayer.';
+                submitBtn.disabled = false;
+              });
+          });
+        });
+
+        var socialButtons = container.querySelectorAll('.ethni-rewards-social-action');
+        socialButtons.forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var messageEl = document.getElementById('ethni-rewards-social-message');
+            messageEl.textContent = 'Envoi de la demande…';
+            btn.disabled = true;
+
+            var actionData = new FormData();
+            actionData.append('action', btn.getAttribute('data-action'));
+
+            fetch('/apps/loyalty/request-social-action', {
+              method: 'POST',
+              body: actionData,
+              cache: 'no-store',
+            })
+              .then(function (res) { return res.json(); })
+              .then(function (result) {
+                if (result.error === 'not_subscribed') {
+                  messageEl.textContent =
+                    "Vous n'êtes pas encore inscrit(e) à la newsletter — abonnez-vous d'abord, puis réessayez.";
+                  btn.disabled = false;
+                  return;
+                }
+                if (result.error) {
+                  messageEl.textContent = "Impossible d'envoyer cette demande pour le moment.";
+                  btn.disabled = false;
+                  return;
+                }
+                if (result.status === 'APPROVED') {
+                  messageEl.textContent =
+                    'Confirmé : vos points ont été crédités immédiatement. Rafraîchissez la page pour voir votre nouveau solde.';
+                  return;
+                }
+                messageEl.textContent =
+                  'Demande envoyée, en attente de validation par notre équipe.';
+              })
+              .catch(function () {
+                messageEl.textContent = 'Une erreur est survenue, merci de réessayer.';
+                btn.disabled = false;
+              });
+          });
+        });
+
+        var milestoneButtons = container.querySelectorAll('.ethni-rewards-milestone-claim');
+        milestoneButtons.forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var messageEl = document.getElementById('ethni-rewards-milestone-message');
+            messageEl.textContent = 'Génération du code…';
+            btn.disabled = true;
+
+            var claimData = new FormData();
+            claimData.append('milestonePoints', btn.getAttribute('data-milestone'));
+
+            fetch('/apps/loyalty/claim-milestone', {
+              method: 'POST',
+              body: claimData,
+              cache: 'no-store',
+            })
+              .then(function (res) { return res.json(); })
+              .then(function (result) {
+                if (result.error) {
+                  messageEl.textContent =
+                    'Impossible de réclamer cette récompense pour le moment.';
+                  btn.disabled = false;
+                  return;
+                }
+                messageEl.textContent =
+                  'Code ' + result.code + ' : ' + result.percent + ' de réduction. Utilisez-le au paiement.';
+              })
+              .catch(function () {
+                messageEl.textContent = 'Une erreur est survenue, merci de réessayer.';
+                btn.disabled = false;
+              });
+          });
+        });
 
         var form = document.getElementById('ethni-rewards-redeem-form');
         if (form) {
